@@ -26,7 +26,35 @@ sed -i 's/group = apache/group = nginx/' /etc/php-fpm.d/www.conf
 systemctl start php-fpm
 systemctl enable php-fpm
 
-# Restart Nginx to pick up the PHP-FPM changes
+# Configure Nginx to use /var/www/html as the web root
+cat > /etc/nginx/conf.d/default.conf << EOL
+server {
+    listen 80;
+    server_name _;
+    root /var/www/html;
+    index index.html index.htm index.php;
+
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php-fpm/www.sock;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+    }
+}
+EOL
+
+# Create the /var/www/html directory if it doesn't exist
+mkdir -p /var/www/html
+
+# Set appropriate permissions
+chown -R nginx:nginx /var/www/html
+chmod -R 755 /var/www/html
+
+# Restart Nginx to pick up the changes
 systemctl restart nginx
 
 # Check if Nginx was installed and started successfully
@@ -55,3 +83,4 @@ else
 fi
 
 echo "Nginx and PHP installation completed successfully"
+echo "Web root is set to /var/www/html"
