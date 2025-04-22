@@ -4,6 +4,6 @@
  </head>
  <body>
  <?php echo '<p>Hello World</p>'; ?> 
- <?php echo 'Current PHP version: ' . phpversion(); ?> 
+ <?php echo '1.8 Current PHP version: ' . phpversion(); ?> 
  </body>
 </html>
