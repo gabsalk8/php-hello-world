@@ -1,2 +1,2 @@
 #!/bin/bash
-rm -f /var/www/html/appspec.yml
+rm -f /var/www/html
